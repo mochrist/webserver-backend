@@ -43,6 +43,9 @@ jobs:
       - name: List target directory
         run: ls -al target
 
+      - name: Test connection
+        run: ssh deploy@159.69.153.5 "touch /opt/backend/bin/testfile_from_actions && ls -al /opt/backend/bin"
+
 
       # 6. Deployment auf den Server durchführen
       - name: Deploy to Server
