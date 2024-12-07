@@ -9,7 +9,7 @@ public class HelloController {
 
     @GetMapping("/api")
     public String sayHello() {
-        return "Hello World from the Backend";
+        return "Hello World from the new Backend";
     }
 
     @PostMapping("/api")
