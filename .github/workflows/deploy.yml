@@ -3,30 +3,48 @@ name: Deploy Backend
 on:
   push:
     branches:
-      - master  # Ändere dies, falls du einen anderen Branch deployen möchtest.
+      - master
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
-      # 1. Code auschecken
+      # 1. Quellcode auschecken
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2. SSH-Agent einrichten
-      - name: Set up SSH
+      # 2. Java einrichten (falls nötig)
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin' # oder ein anderer JDK-Provider
+          java-version: '17' # Version anpassen je nach Projektbedarf
+
+      # 3. SSH-Agent einrichten und Keys hinzufügen
+      - name: Set up SSH agent
         uses: webfactory/ssh-agent@v0.7.0
         with:
           ssh-private-key: ${{ secrets.DEPLOY_SSH_KEY }}
 
-      # 3. Build (optional)
-      - name: Build application
+      # Optional: Known Hosts hinzufügen (falls StrictHostKeyChecking aktiv ist)
+      - name: Add server to known_hosts
         run: |
-          ./mvnw clean package -DskipTests
+          mkdir -p ~/.ssh
+          ssh-keyscan -H 123.45.123.4 >> ~/.ssh/known_hosts
 
-      # 4. Deploy to server
+      # 4. Rechte setzen (falls die mvnw nicht ausführbar ist)
+      - name: Make mvnw executable
+        run: chmod +x ./mvnw
+
+      # 5. Anwendung bauen (ohne Tests, falls gewünscht)
+      - name: Build application
+        run: ./mvnw clean package -DskipTests
+
+      # 6. Deployment auf den Server durchführen
       - name: Deploy to Server
         run: |
-          scp target/webserver-backend.jar moritz@159.69.153.5:/opt/backend/bin/
-          ssh moritz@159.69.153.5 "sudo systemctl restart backend"
+          # Kopiert das gebaute JAR auf den Server
+          scp target/webserver-backend.jar moritz@123.45.123.4:/opt/backend/bin/
+          
+          # Backend Service neu starten
+          ssh moritz@123.45.123.4 "sudo systemctl restart backend"
