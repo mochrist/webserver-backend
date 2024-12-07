@@ -18,7 +18,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin' # oder ein anderer JDK-Provider
-          java-version: '17' # Version anpassen je nach Projektbedarf
+          java-version: '21' # Version anpassen je nach Projektbedarf
 
       # 3. SSH-Agent einrichten und Keys hinzufügen
       - name: Set up SSH agent
@@ -30,7 +30,7 @@ jobs:
       - name: Add server to known_hosts
         run: |
           mkdir -p ~/.ssh
-          ssh-keyscan -H 123.45.123.4 >> ~/.ssh/known_hosts
+          ssh-keyscan -H 159.69.153.5 >> ~/.ssh/known_hosts
 
       # 4. Rechte setzen (falls die mvnw nicht ausführbar ist)
       - name: Make mvnw executable
@@ -44,7 +44,7 @@ jobs:
       - name: Deploy to Server
         run: |
           # Kopiert das gebaute JAR auf den Server
-          scp target/webserver-backend.jar moritz@123.45.123.4:/opt/backend/bin/
+          scp target/webserver-backend.jar moritz@159.69.153.5:/opt/backend/bin/
           
           # Backend Service neu starten
-          ssh moritz@123.45.123.4 "sudo systemctl restart backend"
+          ssh moritz@159.69.153.5 "sudo systemctl restart backend"
