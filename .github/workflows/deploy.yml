@@ -40,6 +40,10 @@ jobs:
       - name: Build application
         run: ./mvnw clean package -DskipTests
 
+      - name: List target directory
+        run: ls -al target
+
+
       # 6. Deployment auf den Server durchführen
       - name: Deploy to Server
         run: |
