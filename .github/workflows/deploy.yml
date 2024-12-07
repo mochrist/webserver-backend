@@ -1,0 +1,32 @@
+name: Deploy Backend
+
+on:
+  push:
+    branches:
+      - main  # Ändere dies, falls du einen anderen Branch deployen möchtest.
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Code auschecken
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # 2. SSH-Agent einrichten
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.DEPLOY_SSH_KEY }}
+
+      # 3. Build (optional)
+      - name: Build application
+        run: |
+          ./mvnw clean package -DskipTests
+
+      # 4. Deploy to server
+      - name: Deploy to Server
+        run: |
+          scp target/webserver-backend.jar moritz@159.69.153.5:/opt/backend/bin/
+          ssh moritz@159.69.153.5 "sudo systemctl restart backend"
