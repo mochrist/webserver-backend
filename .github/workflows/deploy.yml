@@ -51,7 +51,9 @@ jobs:
       - name: Deploy to Server
         run: |
           # Kopiert das gebaute JAR auf den Server
+          ssh deploy@159.69.153.5 "sudo systemctl stop backend"
           scp target/webserver-test-0.0.1-SNAPSHOT.jar deploy@159.69.153.5:/opt/backend/bin/webserver-backend.jar
+          ssh deploy@159.69.153.5 "sudo systemctl start backend"
           
-          # Backend Service neu starten
+          # Backend Service neu starten (unnötig?)
           ssh deploy@159.69.153.5 "sudo systemctl restart backend"
