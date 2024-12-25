@@ -12,7 +12,7 @@ public class HelloController {
 
     @GetMapping("/api")
     public ResponseEntity<CustomMessage> sayHello() {
-        CustomMessage response = new CustomMessage("Hello", "This is the default backend message");
+        CustomMessage response = new CustomMessage("Hello", "This is the default backend message version 2");
         return ResponseEntity.ok(response);
     }
 
